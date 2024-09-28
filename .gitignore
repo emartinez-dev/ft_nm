@@ -1,3 +1,9 @@
+# Vscode folder
+.vscode/
+
+# Program executable
+ft_nm
+
 # Prerequisites
 *.d
 
