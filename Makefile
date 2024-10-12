@@ -6,18 +6,19 @@
 #    By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/05 15:15:27 by franmart          #+#    #+#              #
-#    Updated: 2024/09/28 16:35:18 by franmart         ###   ########.fr        #
+#    Updated: 2024/10/12 15:17:52 by franmart         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_nm
 
 CC = gcc
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -g
 RM = rm -rf
 
 SRC_DIR = src/
-SRCS = main.c
+SRCS =	parser.c\
+		main.c
 
 SRC = ${addprefix ${SRC_DIR}, ${SRCS}}
 OBJ = ${SRC:.c=.o}
