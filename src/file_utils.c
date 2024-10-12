@@ -1,36 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   file_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/28 16:35:59 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 16:55:23 by franmart         ###   ########.fr       */
+/*   Created: 2024/10/12 16:31:05 by franmart          #+#    #+#             */
+/*   Updated: 2024/10/12 16:37:25 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nm.h"
 
-int main(int argc, char **argv)
+int	open_file(char *file)
 {
-	t_args	args = {0};
-	t_list	*files = NULL;
-	t_list	*new_file;
+	int			fd;
 
-	(void) argc;
-	int i = 0;
-	while (argv[++i])
+	fd = open(file, O_RDONLY);
+	if (fd == -1)
+		ft_printf("ft_nm: '%s': %s\n", file, strerror(errno));
+	return (fd);
+}
+
+off_t	get_filesize(int fd)
+{
+	struct stat	st;
+
+	if (fd == -1)
+		return (-1);
+	if (fstat(fd, &st) == -1)
 	{
-		new_file = parse_args(argv[i], &args);
-		if (new_file)
-			ft_lstadd_front(&files, new_file);
+		perror(strerror(errno));
+		close(fd);
+		return (-1);
 	}
-	if (!files)
-		files = ft_lstnew(ft_strdup("a.out"));
-	args.files_size = ft_lstsize(files);
-	parse_elfs_list(files, &args);
-	ft_printf_flush_buffer();
-	ft_lstclear(&files, free);
-	return (0);
+	return (st.st_size);
 }
