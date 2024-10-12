@@ -6,12 +6,12 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 14:15:26 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 15:25:38 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/12 18:00:36 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ELF64_H
-#define ELF64_H
+# define ELF64_H
 
 # include <stdint.h>
 
