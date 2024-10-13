@@ -6,32 +6,31 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 15:27:13 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 17:04:48 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/13 09:06:02 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nm.h"
 #include "ELF.h"
 
-void	parse_elfs_list(t_list *files, t_args *args)
+void	parse_elfs_list(t_list *files)
 {
 	char	*file;
 
 	while (files)
 	{
 		file = files->content;
-		parse_elf(file, args);
+		parse_elf(file);
 		files = files->next;
 	}
 }
 
-int	parse_elf(char *file, t_args *args)
+int	parse_elf(char *file)
 {
 	void	*map;
 	int		fd;
 	off_t	size;
 
-	(void) args;
 	fd = open_file(file);
 	size = get_filesize(fd);
 	if (size == -1)
@@ -47,6 +46,9 @@ int	parse_elf(char *file, t_args *args)
 	int elf_type = get_elf_type(map, file);
 	if (elf_type == -1 || elf_type == ELFCLASSNONE)
 		return (1);
+	if (elf_type == ELFCLASS64)
+		handle_elf64(map);
+	return (0);
 }
 
 int	get_elf_type(void *map, char *file)

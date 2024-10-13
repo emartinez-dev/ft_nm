@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/13 05:33:42 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/13 09:36:46 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,27 +29,69 @@ void	handle_elf64(void *map)
 		i++;
 	}
 	if (symbols_h && strings_h)
-		print_elf64(map + symbols_h->sh_offset,
+		read_symbols_elf64(map + symbols_h->sh_offset,
 					symbols_h->sh_size / symbols_h->sh_entsize,
 					map + strings_h->sh_offset);
 	else
 		ft_printf("Symbol table or string table not found\n");
 }
 
-void	print_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
-					char *str_table)
+void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
+							char *str_table)
 {
-	uint64_t	i = 0;
+	uint64_t		i = -1;
+	t_ELF64_symbol	**symbols;
 
-	while (i < n_symbols)
+	symbols = ft_calloc(n_symbols, sizeof(t_ELF64_symbol *));
+	while (++i < n_symbols)
+		symbols[i] = &symbol_table[i];
+	symbols = sort_elf64_list(symbols, n_symbols, str_table);
+	i = -1;
+	while (++i < n_symbols)
+		print_elf64_symbol(symbols[i], str_table);
+}
+
+void	print_elf64_symbol(t_ELF64_symbol *sym, char *str_table)
+{
+	if (sym->st_value != 0)
+		print_number_with_padding(sym->st_value, 16);
+	else
+		ft_printf("                 ");
+	print_type(ST_TYPE(sym->st_info), ST_BIND(sym->st_info));
+	ft_printf("%s\n", &str_table[sym->st_name]);
+}
+
+void	swap_elf64(t_ELF64_symbol **a, t_ELF64_symbol **b);
+
+// Bubblesort because I am lazy and there are few symbols
+t_ELF64_symbol	**sort_elf64_list(t_ELF64_symbol **list, uint64_t len,
+							char *str_table)
+{
+	uint64_t i;
+	uint64_t j;
+
+	i = 0;
+	while (i < len - 1)
 	{
-		t_ELF64_symbol *sym = &symbol_table[i];
-		if (sym->st_value != 0)
-			print_number_with_padding(sym->st_value, 16);
-		else
-			ft_printf("                 ");
-		print_type(ST_TYPE(sym->st_info), ST_BIND(sym->st_info));
-		ft_printf("%s\n", &str_table[sym->st_name]);
+		j = 0;
+		while (j < len - i - 1)
+		{
+			char *s1 = &str_table[list[j]->st_name];
+			char *s2 = &str_table[list[j + 1]->st_name];
+			if (ft_strncmp(s1, s2, ft_strlen(s1)) > 0)
+				swap_elf64(&list[j], &list[j + 1]);
+			j++;
+		}
 		i++;
 	}
+	return (list);
+}
+
+void	swap_elf64(t_ELF64_symbol **a, t_ELF64_symbol **b)
+{
+	t_ELF64_symbol	*temp;
+
+	temp = *a;
+	*a = *b;
+	*b = temp;
 }
