@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:05:40 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 19:31:41 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/13 05:32:46 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,9 @@
 # define SHT_STRTAB 0x3
 # define SHT_SYMTAB 0x2
 
-# define ELF64_ST_TYPE(info) ((info) & 0xf)
-# define ELF64_ST_BIND(info) ((info) >> 4)
+# define ST_TYPE(info) ((info) & 0xf)
+# define ST_BIND(info) ((info) >> 4)
+# define ST_VISIBILITY(other) ((other)&0x3)
 
 # define STT_NOTYPE  0
 # define STT_OBJECT  1
@@ -64,5 +65,9 @@
 # define STB_LOPROC  13
 # define STB_HIPROC  15
 
+# define STV_DEFAULT	0
+# define STV_INTERNAL	1
+# define STV_HIDDEN		2
+# define STV_PROTECTED	3
 
 #endif

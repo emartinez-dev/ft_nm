@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 19:59:57 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/13 05:33:42 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ void	print_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
 			print_number_with_padding(sym->st_value, 16);
 		else
 			ft_printf("                 ");
-		print_type(ELF64_ST_TYPE(sym->st_info),
-				ELF64_ST_BIND(sym->st_info));
+		print_type(ST_TYPE(sym->st_info), ST_BIND(sym->st_info));
 		ft_printf("%s\n", &str_table[sym->st_name]);
 		i++;
 	}
