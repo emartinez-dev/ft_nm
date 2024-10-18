@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/13 09:36:46 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/18 18:48:34 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ void	handle_elf64(void *map)
 	if (symbols_h && strings_h)
 		read_symbols_elf64(map + symbols_h->sh_offset,
 					symbols_h->sh_size / symbols_h->sh_entsize,
-					map + strings_h->sh_offset);
+					map + strings_h->sh_offset, section_h);
 	else
 		ft_printf("Symbol table or string table not found\n");
 }
 
 void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
-							char *str_table)
+							char *str_table, t_ELF64_section_header *section_h)
 {
 	uint64_t		i = -1;
 	t_ELF64_symbol	**symbols;
@@ -48,16 +48,22 @@ void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
 	symbols = sort_elf64_list(symbols, n_symbols, str_table);
 	i = -1;
 	while (++i < n_symbols)
-		print_elf64_symbol(symbols[i], str_table);
+		print_elf64_symbol(symbols[i], str_table, section_h);
 }
 
-void	print_elf64_symbol(t_ELF64_symbol *sym, char *str_table)
+void	print_elf64_symbol(t_ELF64_symbol *sym, char *str_table,
+							t_ELF64_section_header *section_h)
 {
-	if (sym->st_value != 0)
+	char		type = '?';
+
+	if (!sym->st_name || ST_TYPE(sym->st_info) > STT_FUNC)
+		return ;
+	if (section_h[sym->st_shndx].sh_type != SHN_UNDEF)
 		print_number_with_padding(sym->st_value, 16);
 	else
 		ft_printf("                 ");
-	print_type(ST_TYPE(sym->st_info), ST_BIND(sym->st_info));
+	type = get_type_elf64(sym, section_h);
+	ft_printf("%c ", type);
 	ft_printf("%s\n", &str_table[sym->st_name]);
 }
 

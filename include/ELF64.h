@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 14:15:26 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 18:00:36 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:54:04 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ typedef struct	s_ELF64_section_header
 	uint64_t	sh_addralign;
 	uint64_t	sh_entsize;
 }	t_ELF64_section_header;
+
+// Symbol docs: https://docs.oracle.com/cd/E19683-01/816-1386/chapter6-79797/index.html
 
 typedef struct s_ELF64_symbol
 {

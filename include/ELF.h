@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:05:40 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/13 05:32:46 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/18 17:45:34 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,13 @@
 # define EV_NONE    0
 # define EV_CURRENT 1
 
-# define SHT_STRTAB 0x3
 # define SHT_SYMTAB 0x2
+# define SHT_STRTAB 0x3
+# define SHT_NOBITS 0x8
+
+# define SHF_WRITE		0x1
+# define SHF_ALLOC		0x2
+# define SHF_EXECINSTR	0x4
 
 # define ST_TYPE(info) ((info) & 0xf)
 # define ST_BIND(info) ((info) >> 4)
@@ -69,5 +74,9 @@
 # define STV_INTERNAL	1
 # define STV_HIDDEN		2
 # define STV_PROTECTED	3
+
+# define SHN_UNDEF	0
+# define SHN_ABS	0xfff1
+# define SHN_COMMON	0xfff2
 
 #endif

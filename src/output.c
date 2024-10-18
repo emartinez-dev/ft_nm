@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 19:06:28 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 19:42:36 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/18 18:46:27 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,32 +26,13 @@ void    print_number_with_padding(uint64_t n, int width)
 	ft_printf("%x ", n);
 }
 
-void    print_type(unsigned char type, unsigned char bind)
+char    get_type_elf64(t_ELF64_symbol *sym, t_ELF64_section_header *section_h)
 {
 	char c = '?';
+	(void) sym;
+	(void) section_h;
 
-    if (bind == STB_LOCAL)
-	{
-		if (type == STT_OBJECT) c = 'd';
-		if (type == STT_FUNC) c = 't';
-		if (type == STT_SECTION) c = 's';
-		if (type == STT_COMMON) c = 'c';
-	}
-    else if (bind == STB_GLOBAL)
-	{
-		if (type == STT_OBJECT) c = 'D';
-		if (type == STT_FUNC) c = 'T';
-		if (type == STT_SECTION) c = 'S';
-		if (type == STT_COMMON) c = 'B';
-		if (type == STT_NOTYPE) c = 'N';
-	}
-    else if (bind == STB_WEAK)
-	{
-		if (type == STT_OBJECT) c = 'w';
-		if (type == STT_FUNC) c = 'w';
-		if (type == STT_NOTYPE) c = 'W';
-	}
-	ft_printf("%c ", c);
+	return (c);
 }
 
 int     number_width(uint64_t n)
