@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/18 18:48:34 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/19 13:38:21 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	handle_elf64(void *map)
 	t_ELF64_section_header	*section_h = map + header->e_shoff;
 	t_ELF64_section_header	*symbols_h = NULL;
 	t_ELF64_section_header	*strings_h = NULL;
+	t_ELF64_section_header	*shstrtab_h = NULL;
 
 	uint64_t	i = 0;
 	while (i < header->e_shnum)
@@ -26,18 +27,22 @@ void	handle_elf64(void *map)
 			symbols_h = &section_h[i];
 		if (section_h[i].sh_type == SHT_STRTAB && i != header->e_shstrndx)
 			strings_h = &section_h[i];
+		if (i == header->e_shstrndx)
+			shstrtab_h = &section_h[i];
 		i++;
 	}
 	if (symbols_h && strings_h)
 		read_symbols_elf64(map + symbols_h->sh_offset,
 					symbols_h->sh_size / symbols_h->sh_entsize,
-					map + strings_h->sh_offset, section_h);
+					map + strings_h->sh_offset, section_h,
+					map + shstrtab_h->sh_offset);
 	else
 		ft_printf("Symbol table or string table not found\n");
 }
 
 void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
-							char *str_table, t_ELF64_section_header *section_h)
+							char *str_table, t_ELF64_section_header *section_h,
+							char *shstrtab)
 {
 	uint64_t		i = -1;
 	t_ELF64_symbol	**symbols;
@@ -48,11 +53,11 @@ void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
 	symbols = sort_elf64_list(symbols, n_symbols, str_table);
 	i = -1;
 	while (++i < n_symbols)
-		print_elf64_symbol(symbols[i], str_table, section_h);
+		print_elf64_symbol(symbols[i], str_table, section_h, shstrtab);
 }
 
 void	print_elf64_symbol(t_ELF64_symbol *sym, char *str_table,
-							t_ELF64_section_header *section_h)
+							t_ELF64_section_header *section_h, char *shstrtab)
 {
 	char		type = '?';
 
@@ -62,7 +67,7 @@ void	print_elf64_symbol(t_ELF64_symbol *sym, char *str_table,
 		print_number_with_padding(sym->st_value, 16);
 	else
 		ft_printf("                 ");
-	type = get_type_elf64(sym, section_h);
+	type = get_type_elf64(sym, section_h, shstrtab);
 	ft_printf("%c ", type);
 	ft_printf("%s\n", &str_table[sym->st_name]);
 }
