@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 16:36:10 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/19 13:37:59 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/21 23:31:32 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef enum { false, true } bool;
 # define false 0
 
 /* elf_parser.c */
-void	parse_elfs_list(t_list *files);
+int		parse_elfs_list(t_list *files);
 int		parse_elf(char *file);
 int		get_elf_type(void *map, char *file);
 void	handle_elf(int elf_type, void *map);

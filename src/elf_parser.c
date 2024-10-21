@@ -6,23 +6,27 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 15:27:13 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/13 09:06:02 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/21 23:31:05 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nm.h"
 #include "ELF.h"
 
-void	parse_elfs_list(t_list *files)
+int	parse_elfs_list(t_list *files)
 {
 	char	*file;
+	int		status;
 
+	status = 0;
 	while (files)
 	{
 		file = files->content;
-		parse_elf(file);
+		if (parse_elf(file))
+			status = 1;
 		files = files->next;
 	}
+	return (status);
 }
 
 int	parse_elf(char *file)

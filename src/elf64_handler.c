@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/21 23:10:58 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/21 23:39:51 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ void	handle_elf64(void *map)
 					map + strings_h->sh_offset, section_h,
 					map + shstrtab_h->sh_offset);
 	else if (!symbols_h)
-		ft_printf("ft_nm: symbol table not found\n");
+		ft_putstr_fd("ft_nm: symbol table not found\n", STDERR_FILENO);
 	else if (!strings_h)
-		ft_printf("ft_nm: string table not found\n");
+		ft_putstr_fd("ft_nm: string table not found\n", STDERR_FILENO);
 }
 
 void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,

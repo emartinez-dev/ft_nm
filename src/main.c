@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 16:35:59 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 18:51:48 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/21 23:30:59 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int main(int argc, char **argv)
 {
 	t_list	*files = NULL;
 	t_list	*new_file;
+	int		status;
 
 	(void) argc;
 	int i = 0;
@@ -27,8 +28,8 @@ int main(int argc, char **argv)
 	}
 	if (!files)
 		files = ft_lstnew(ft_strdup("a.out"));
-	parse_elfs_list(files);
+	status = parse_elfs_list(files);
 	ft_printf_flush_buffer();
 	ft_lstclear(&files, free);
-	return (0);
+	return (status);
 }
