@@ -6,7 +6,7 @@
 #    By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/05 15:15:27 by franmart          #+#    #+#              #
-#    Updated: 2024/10/12 19:06:25 by franmart         ###   ########.fr        #
+#    Updated: 2024/10/22 21:45:19 by franmart         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ SRCS =	elf_parser.c\
 		file_utils.c\
 		parser.c\
 		elf64_handler.c\
+		elf32_handler.c\
 		output.c\
 		main.c
 

@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 14:10:05 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 17:57:26 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 21:53:05 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,11 @@ typedef struct	s_ELF32_section_header
 typedef struct s_ELF32_symbol
 {
 	uint32_t 		st_name;
+	uint32_t		st_value;
+	uint32_t		st_size;
 	unsigned char	st_info;
 	unsigned char	st_other;
 	uint16_t		st_shndx;
-	uint32_t		st_value;
-	uint32_t		st_size;
 }	t_ELF32_symbol;
 
 #endif

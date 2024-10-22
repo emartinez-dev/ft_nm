@@ -5,11 +5,11 @@ Recreating UNIX name mangling program
 
 ### General requisites
 
-- [ ] Assume `a.out` if no filename is given
-- [ ] List every symbol value in hexadecimal radix
-- [ ] Lowercase symbols types are usually local.
-- [ ] Uppercase symbols types are global, but "u", "v" and "w" symbols are special global ones.
-- [ ] The output should be `symbol value | symbol type | symbol name`.
+- [x] Assume `a.out` if no filename is given
+- [x] List every symbol value in hexadecimal radix
+- [x] Lowercase symbols types are usually local.
+- [x] Uppercase symbols types are global, but "u", "v" and "w" symbols are special global ones.
+- [x] The output should be `symbol value | symbol type | symbol name`.
 
 ### Symbol types
 - "A": The symbol's value is absolute, will not be changed by further linking.
@@ -21,11 +21,11 @@ Recreating UNIX name mangling program
 
 ### Formats handled
 
-- [ ] ELF binaries
-- [ ] x86_32
-- [ ] x64
-- [ ] object files
-- [ ] .so
+- [x] ELF binaries
+- [x] x86_32
+- [x] x64
+- [x] object files
+- [x] .so
 
 ### Other considerations
 

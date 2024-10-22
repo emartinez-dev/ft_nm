@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 15:27:13 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/21 23:31:05 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 21:31:35 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int	parse_elf(char *file)
 		return (1);
 	if (elf_type == ELFCLASS64)
 		handle_elf64(map);
+	else if (elf_type == ELFCLASS32)
+		handle_elf32(map);
 	return (0);
 }
 
