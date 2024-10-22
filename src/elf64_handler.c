@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/22 20:50:38 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 21:26:55 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	print_elf64_symbol(t_ELF64_symbol *sym, uint16_t n_sh, t_ELF64_section_head
 {
 	char	class;
 
-	if (!sym->st_name || ST_TYPE(sym->st_info) > STT_FUNC || sym->st_shndx >= n_sh)
+	if (!sym->st_name || sym->st_shndx >= n_sh)
 		return ;
 	if (sh[sym->st_shndx].sh_type == SHN_UNDEF)
 		ft_printf("                 ");
@@ -79,11 +79,14 @@ char    get_symbol_class_elf64(t_ELF64_symbol *sym, t_ELF64_section_header *sh)
 	char					class = '?';
 	unsigned char			type = ST_TYPE(sym->st_info);
 	unsigned char			bind = ST_BIND(sym->st_info);
+	unsigned char			visibility = ST_VISIBILITY(sym->st_other);
 
 	switch (sym->st_shndx)
 	{
 		case SHN_UNDEF:
-			return (bind == STB_WEAK) ? 'w' : 'U';
+			if (bind == STB_WEAK)
+				return (type == STT_OBJECT) ? 'v' : 'w';
+			return 'U';
 		case SHN_ABS:
 			return 'A';
 		case SHN_COMMON:
@@ -99,7 +102,7 @@ char    get_symbol_class_elf64(t_ELF64_symbol *sym, t_ELF64_section_header *sh)
 		class = 'D';
 
 	if (bind == STB_WEAK)
-        return (sym->st_shndx == SHN_UNDEF) ? 'w' : 'W';
+        return (visibility == STV_HIDDEN) ? 'v' : 'W';
 
 	if (bind == STB_LOCAL && class != '?')
         class = ft_tolower(class);
