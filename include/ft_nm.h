@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 16:36:10 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/22 00:01:12 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 20:50:22 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,25 +36,22 @@ int		get_elf_type(void *map, char *file);
 void	handle_elf(int elf_type, void *map);
 
 /* elf64_handler.c */
-void			handle_elf64(void *map);
-void			read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
-							char *str_table, t_ELF64_section_header *section_h, char *shstrtab,
-							uint16_t max_size);
+void	handle_elf64(void *map);
+void	read_symbols_elf64(t_ELF64_symbol *symtab, uint64_t n_sym, uint16_t n_sh,
+							t_ELF64_section_header *sh, char *strtab);
+void	print_elf64_symbol(t_ELF64_symbol *sym, uint16_t n_sh, t_ELF64_section_header *sh,
+							char *strtab);
+char    get_symbol_class_elf64(t_ELF64_symbol *sym, t_ELF64_section_header *sh);
 t_ELF64_symbol	**sort_elf64_list(t_ELF64_symbol **list, uint64_t len, char *str_table);
-void			print_elf64_symbol(t_ELF64_symbol *sym, char *str_table,
-							t_ELF64_section_header *section_h, char * shstrtab,
-							uint16_t max_size);
 
 /* file_utils.c */
 int		open_file(char *file);
 off_t	get_filesize(int fd);
 
 /* parser.c */
-t_list    *parse_args(char *arg);
+t_list	*parse_args(char *arg);
 
 /* output.c */
 void    print_number_with_padding(uint64_t n, int width);
-char    get_type_elf64(t_ELF64_symbol *sym, t_ELF64_section_header *section_h,
-						char *shstrtab);
 
 #endif

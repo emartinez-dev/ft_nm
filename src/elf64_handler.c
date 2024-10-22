@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 17:27:44 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/22 00:01:29 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 20:50:38 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,70 +15,108 @@
 void	handle_elf64(void *map)
 {
 	t_ELF64_header 			*header = map;
-	t_ELF64_section_header	*section_h = map + header->e_shoff;
-	t_ELF64_section_header	*symbols_h = NULL;
-	t_ELF64_section_header	*strings_h = NULL;
-	t_ELF64_section_header	*shstrtab_h = NULL;
+	t_ELF64_section_header	*sh = map + header->e_shoff;
+	t_ELF64_section_header	*sh_sym = NULL;
+	t_ELF64_section_header	*sh_str = NULL;
 
-	uint64_t	i = 0;
-	while (i < header->e_shnum)
+	uint64_t	i = -1;
+	while (++i < header->e_shnum)
 	{
-		if (section_h[i].sh_type == SHT_SYMTAB)
-			symbols_h = &section_h[i];
-		if (section_h[i].sh_type == SHT_STRTAB && i != header->e_shstrndx)
-			strings_h = &section_h[i];
-		if (i == header->e_shstrndx)
-			shstrtab_h = &section_h[i];
-		i++;
+		if (sh[i].sh_type == SHT_SYMTAB)
+			sh_sym = &sh[i];
+		if (sh[i].sh_type == SHT_STRTAB && i != header->e_shstrndx)
+			sh_str = &sh[i];
 	}
-	if (symbols_h && strings_h)
-		read_symbols_elf64(map + symbols_h->sh_offset,
-					symbols_h->sh_size / symbols_h->sh_entsize,
-					map + strings_h->sh_offset, section_h,
-					map + shstrtab_h->sh_offset, header->e_shnum);
-	else if (!symbols_h)
+	if (sh_sym && sh_str)
+	{
+		t_ELF64_symbol	*symtab = map + sh_sym->sh_offset;
+		uint64_t 		n_sym = sh_sym->sh_size / sh_sym->sh_entsize;
+		uint16_t		n_sh = header->e_shnum;
+		char			*strtab = map + sh_str->sh_offset;
+
+		read_symbols_elf64(symtab, n_sym, n_sh, sh, strtab);
+	}
+	else if (!sh_sym)
 		ft_putstr_fd("ft_nm: symbol table not found\n", STDERR_FILENO);
-	else if (!strings_h)
+	else if (!sh_str)
 		ft_putstr_fd("ft_nm: string table not found\n", STDERR_FILENO);
 }
 
-void	read_symbols_elf64(t_ELF64_symbol *symbol_table, uint64_t n_symbols,
-							char *str_table, t_ELF64_section_header *section_h,
-							char *shstrtab, uint16_t max_size)
+void	read_symbols_elf64(t_ELF64_symbol *symtab, uint64_t n_sym, uint16_t n_sh,
+							t_ELF64_section_header *sh, char *strtab)
 {
 	uint64_t		i = -1;
 	t_ELF64_symbol	**symbols;
 
-	symbols = ft_calloc(n_symbols, sizeof(t_ELF64_symbol *));
-	while (++i < n_symbols)
-		symbols[i] = &symbol_table[i];
-	symbols = sort_elf64_list(symbols, n_symbols, str_table);
+	symbols = ft_calloc(n_sym, sizeof(t_ELF64_symbol *));
+	while (++i < n_sym)
+		symbols[i] = &symtab[i];
+	symbols = sort_elf64_list(symbols, n_sym, strtab);
 	i = -1;
-	while (++i < n_symbols)
-		print_elf64_symbol(symbols[i], str_table, section_h, shstrtab, max_size);
+	while (++i < n_sym)
+		print_elf64_symbol(symbols[i], n_sh, sh, strtab);
 }
 
-void	print_elf64_symbol(t_ELF64_symbol *sym, char *str_table,
-							t_ELF64_section_header *section_h, char *shstrtab, uint16_t max_size)
+void	print_elf64_symbol(t_ELF64_symbol *sym, uint16_t n_sh, t_ELF64_section_header *sh,
+							char *strtab)
 {
-	char		type = '?';
+	char	class;
 
-	if (!sym->st_name || ST_TYPE(sym->st_info) > STT_FUNC || sym->st_shndx > max_size)
+	if (!sym->st_name || ST_TYPE(sym->st_info) > STT_FUNC || sym->st_shndx >= n_sh)
 		return ;
-	if (section_h[sym->st_shndx].sh_type != SHN_UNDEF)
-		print_number_with_padding(sym->st_value, 16);
-	else
+	if (sh[sym->st_shndx].sh_type == SHN_UNDEF)
 		ft_printf("                 ");
-	type = get_type_elf64(sym, section_h, shstrtab);
-	ft_printf("%c ", type);
-	ft_printf("%s\n", &str_table[sym->st_name]);
+	else
+		print_number_with_padding(sym->st_value, 16);
+	class = get_symbol_class_elf64(sym, sh);
+	ft_printf("%c ", class);
+	ft_printf("%s\n", &strtab[sym->st_name]);
 }
 
-void	swap_elf64(t_ELF64_symbol **a, t_ELF64_symbol **b);
+char    get_symbol_class_elf64(t_ELF64_symbol *sym, t_ELF64_section_header *sh)
+{
+	t_ELF64_section_header	*sh_sym = &sh[sym->st_shndx];
+	char					class = '?';
+	unsigned char			type = ST_TYPE(sym->st_info);
+	unsigned char			bind = ST_BIND(sym->st_info);
+
+	switch (sym->st_shndx)
+	{
+		case SHN_UNDEF:
+			return (bind == STB_WEAK) ? 'w' : 'U';
+		case SHN_ABS:
+			return 'A';
+		case SHN_COMMON:
+			return 'C';
+	}
+	if (type == STT_FUNC || sh_sym->sh_flags & SHF_EXECINSTR)
+		class = 'T';
+	else if (sh_sym->sh_type == SHT_NOBITS && (sh_sym->sh_flags & (SHF_ALLOC | SHF_WRITE)))
+		class = 'B';
+	else if (sh_sym->sh_flags & SHF_ALLOC && !(sh_sym->sh_flags & SHF_WRITE))
+		class = 'R';
+	else if (sh_sym->sh_flags & (SHF_ALLOC | SHF_WRITE))
+		class = 'D';
+
+	if (bind == STB_WEAK)
+        return (sym->st_shndx == SHN_UNDEF) ? 'w' : 'W';
+
+	if (bind == STB_LOCAL && class != '?')
+        class = ft_tolower(class);
+	return (class);
+}
+
+void	swap_elf64(t_ELF64_symbol **a, t_ELF64_symbol **b)
+{
+	t_ELF64_symbol	*temp;
+
+	temp = *a;
+	*a = *b;
+	*b = temp;
+}
 
 // Bubblesort because I am lazy and there are few symbols
-t_ELF64_symbol	**sort_elf64_list(t_ELF64_symbol **list, uint64_t len,
-							char *str_table)
+t_ELF64_symbol	**sort_elf64_list(t_ELF64_symbol **list, uint64_t len, char *str_table)
 {
 	uint64_t i;
 	uint64_t j;
@@ -98,13 +136,4 @@ t_ELF64_symbol	**sort_elf64_list(t_ELF64_symbol **list, uint64_t len,
 		i++;
 	}
 	return (list);
-}
-
-void	swap_elf64(t_ELF64_symbol **a, t_ELF64_symbol **b)
-{
-	t_ELF64_symbol	*temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
 }
