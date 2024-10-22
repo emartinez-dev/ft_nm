@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:31:05 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/12 16:37:25 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 22:01:45 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,12 @@ int	open_file(char *file)
 
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		ft_printf("ft_nm: '%s': %s\n", file, strerror(errno));
+	{
+		ft_putstr_fd("ft_nm: ", STDERR_FILENO);
+		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		perror(strerror(errno));
+	}
 	return (fd);
 }
 

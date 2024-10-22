@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 15:27:13 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/22 21:31:35 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/22 22:00:33 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	parse_elf(char *file)
 	map = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (map == MAP_FAILED)
 	{
-		ft_printf("%s: ", strerror(errno));
+		ft_putstr_fd(strerror(errno), STDERR_FILENO);
 		close(fd);
 		return (1);
 	}
@@ -64,12 +64,16 @@ int	get_elf_type(void *map, char *file)
 	if (!(e_ident[EI_MAG0] == ELFMAG0 && e_ident[EI_MAG1] == ELFMAG1 &&
 	e_ident[EI_MAG2] == ELFMAG2 && e_ident[EI_MAG3] == ELFMAG3))
 	{
-		ft_printf("ft_nm: %s: file format not recognized\n", file);
+		ft_putstr_fd("ft_nm: ", STDERR_FILENO);
+		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(": file format not recognized\n", STDERR_FILENO);
 		return (-1);
 	}
 	if (e_ident[EI_CLASS] == ELFCLASSNONE)
 	{
-		ft_printf("ft_nm: %s: unknown ELF class\n", file);
+		ft_putstr_fd("ft_nm: ", STDERR_FILENO);
+		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(": unknown ELF class\n", STDERR_FILENO);
 		return (-1);
 	}
 	return (e_ident[EI_CLASS]);
