@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:31:52 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/24 21:45:25 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:58:18 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	read_symbols_elf32(t_ELF32_symbol *symtab, uint32_t n_sym, uint16_t n_sh,
 	i = -1;
 	while (++i < n_sym)
 		print_elf32_symbol(symbols[i], n_sh, sh, strtab);
+	free(symbols);
 }
 
 void	print_elf32_symbol(t_ELF32_symbol *sym, uint16_t n_sh, t_ELF32_section_header *sh,
@@ -119,10 +120,9 @@ t_ELF32_symbol **msort_elf32(t_ELF32_symbol **left, uint64_t len_l, t_ELF32_symb
 
 	while (i < len_l && j < len_r)
 	{
-
-		char *s1 = &str_table[left[j]->st_name];
+		char *s1 = &str_table[left[i]->st_name];
 		char *s2 = &str_table[right[j]->st_name];
-		if (ft_strncmpi(s1, s2, ft_strlen(s1)) <= 0)
+		if (ft_strncmp(s1, s2, ft_strlen(s1)) <= 0)
 			temp[k++] = left[i++];
 		else
 			temp[k++] = right[j++];
