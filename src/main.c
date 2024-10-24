@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 16:35:59 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/21 23:30:59 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/24 22:24:34 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,18 @@ int main(int argc, char **argv)
 	}
 	if (!files)
 		files = ft_lstnew(ft_strdup("a.out"));
-	status = parse_elfs_list(files);
+	status = parse_elf_list(files);
 	ft_printf_flush_buffer();
 	ft_lstclear(&files, free);
 	return (status);
+}
+
+t_list    *parse_args(char *arg)
+{
+	if (arg[0] != '-')
+		return ft_lstnew(ft_strdup(arg));
+	ft_putstr_fd("ft_nm: invalid option -- '", STDERR_FILENO);
+	ft_putstr_fd(arg, STDERR_FILENO);
+	ft_putstr_fd("'\n", STDERR_FILENO);
+	exit(1);
 }

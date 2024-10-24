@@ -6,21 +6,21 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 16:31:05 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/24 22:16:39 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/24 22:39:33 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nm.h"
 
-int	open_file(char *file)
+int	open_file(char *filename)
 {
-	int			fd;
+	int	fd;
 
-	fd = open(file, O_RDONLY);
+	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 	{
 		ft_putstr_fd("ft_nm: '", STDERR_FILENO);
-		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(filename, STDERR_FILENO);
 		ft_putstr_fd("': ", STDERR_FILENO);
 		perror(strerror(errno));
 	}

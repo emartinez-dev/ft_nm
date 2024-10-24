@@ -6,7 +6,7 @@
 #    By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/05 15:15:27 by franmart          #+#    #+#              #
-#    Updated: 2024/10/22 21:45:19 by franmart         ###   ########.fr        #
+#    Updated: 2024/10/24 22:46:27 by franmart         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,10 +19,9 @@ RM = rm -rf
 SRC_DIR = src/
 SRCS =	elf_parser.c\
 		file_utils.c\
-		parser.c\
 		elf64_handler.c\
 		elf32_handler.c\
-		output.c\
+		output_helpers.c\
 		main.c
 
 SRC = ${addprefix ${SRC_DIR}, ${SRCS}}

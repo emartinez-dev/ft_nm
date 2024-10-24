@@ -6,36 +6,20 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/12 15:27:13 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/24 22:19:31 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/24 22:45:50 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nm.h"
 #include "ELF.h"
 
-int	parse_elfs_list(t_list *files)
-{
-	char	*file;
-	int		status;
-
-	status = 0;
-	while (files)
-	{
-		file = files->content;
-		if (parse_elf(file))
-			status = 1;
-		files = files->next;
-	}
-	return (status);
-}
-
-int	parse_elf(char *file)
+int	parse_elf(char *filename)
 {
 	void	*map;
 	int		fd;
 	off_t	size;
 
-	fd = open_file(file);
+	fd = open_file(filename);
 	size = get_filesize(fd);
 	if (size == -1)
 		return (1);
@@ -47,18 +31,35 @@ int	parse_elf(char *file)
 		close(fd);
 		return (1);
 	}
-	int elf_type = get_elf_type(map, file);
-	if (elf_type == ELFCLASS64)
-		handle_elf64(map);
-	else if (elf_type == ELFCLASS32)
-		handle_elf32(map);
+	int elf_class = get_elf_class(map, filename);
+	if (elf_class == ELFCLASS64)
+		process_elf64(map);
+	else if (elf_class == ELFCLASS32)
+		process_elf32(map);
+	else
+		ft_putstr_fd("ft_nm: ELF class not recognized\n", STDERR_FILENO);
 	if (munmap(map, size) == -1)
 		ft_putstr_fd(strerror(errno), STDERR_FILENO);
 	close(fd);
 	return (0);
 }
 
-int	get_elf_type(void *map, char *file)
+int	parse_elf_list(t_list *files)
+{
+	char	*filename;
+	int		status = 0;
+
+	while (files)
+	{
+		filename = files->content;
+		if (parse_elf(filename))
+			status = 1;
+		files = files->next;
+	}
+	return (status);
+}
+
+int	get_elf_class(void *map, char *file)
 {
 	unsigned char	*e_ident = map;
 

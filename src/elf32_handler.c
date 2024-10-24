@@ -6,13 +6,13 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:31:52 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/24 21:58:18 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/24 22:45:04 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nm.h"
 
-void	handle_elf32(void *map)
+void	process_elf32(void *map)
 {
 	t_ELF32_header 			*header = map;
 	t_ELF32_section_header	*sh = map + header->e_shoff;
@@ -34,7 +34,7 @@ void	handle_elf32(void *map)
 		uint16_t		n_sh = header->e_shnum;
 		char			*strtab = map + sh_str->sh_offset;
 
-		read_symbols_elf32(symtab, n_sym, n_sh, sh, strtab);
+		extract_elf32_symbols(symtab, n_sym, n_sh, sh, strtab);
 	}
 	else if (!sh_sym)
 		ft_putstr_fd("ft_nm: symbol table not found\n", STDERR_FILENO);
@@ -42,7 +42,7 @@ void	handle_elf32(void *map)
 		ft_putstr_fd("ft_nm: string table not found\n", STDERR_FILENO);
 }
 
-void	read_symbols_elf32(t_ELF32_symbol *symtab, uint32_t n_sym, uint16_t n_sh,
+void	extract_elf32_symbols(t_ELF32_symbol *symtab, uint32_t n_sym, uint16_t n_sh,
 							t_ELF32_section_header *sh, char *strtab)
 {
 	uint32_t		i = -1;
@@ -51,7 +51,7 @@ void	read_symbols_elf32(t_ELF32_symbol *symtab, uint32_t n_sym, uint16_t n_sh,
 	symbols = ft_calloc(n_sym, sizeof(t_ELF32_symbol *));
 	while (++i < n_sym)
 		symbols[i] = &symtab[i];
-	symbols = sort_elf32_list(symbols, n_sym, strtab);
+	symbols = sort_elf32_symbols(symbols, n_sym, strtab);
 	i = -1;
 	while (++i < n_sym)
 		print_elf32_symbol(symbols[i], n_sh, sh, strtab);
@@ -65,13 +65,13 @@ void	print_elf32_symbol(t_ELF32_symbol *sym, uint16_t n_sh, t_ELF32_section_head
 
 	if (!sym->st_name || sym->st_shndx >= n_sh)
 		return ;
+
 	if (sh[sym->st_shndx].sh_type == SHN_UNDEF)
 		ft_printf("         ");
 	else
 		print_number_with_padding(sym->st_value, 8);
 	class = get_symbol_class_elf32(sym, sh);
-	ft_printf("%c ", class);
-	ft_printf("%s\n", &strtab[sym->st_name]);
+	ft_printf("%c %s\n", class, &strtab[sym->st_name]);
 }
 
 char    get_symbol_class_elf32(t_ELF32_symbol *sym, t_ELF32_section_header *sh)
@@ -138,12 +138,14 @@ t_ELF32_symbol **msort_elf32(t_ELF32_symbol **left, uint64_t len_l, t_ELF32_symb
 	return (left);
 }
 
-t_ELF32_symbol **sort_elf32_list(t_ELF32_symbol **list, uint64_t len, char *str_table)
+t_ELF32_symbol **sort_elf32_symbols(t_ELF32_symbol **list, uint64_t len, char *str_table)
 {
 	uint64_t	mid = len / 2;
+
 	if (len <= 1)
 		return (list);
-	t_ELF32_symbol **left = sort_elf32_list(list, mid, str_table);
-	t_ELF32_symbol **right = sort_elf32_list(list + mid, len - mid, str_table);
+
+	t_ELF32_symbol **left = sort_elf32_symbols(list, mid, str_table);
+	t_ELF32_symbol **right = sort_elf32_symbols(list + mid, len - mid, str_table);
 	return (msort_elf32(left, mid, right, len - mid, str_table));
 }
