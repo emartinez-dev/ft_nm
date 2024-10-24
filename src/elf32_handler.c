@@ -6,7 +6,7 @@
 /*   By: franmart <franmart@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:31:52 by franmart          #+#    #+#             */
-/*   Updated: 2024/10/22 21:48:20 by franmart         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:45:25 by franmart         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,34 +109,41 @@ char    get_symbol_class_elf32(t_ELF32_symbol *sym, t_ELF32_section_header *sh)
 	return (class);
 }
 
-void	swap_elf32(t_ELF32_symbol **a, t_ELF32_symbol **b)
+t_ELF32_symbol **msort_elf32(t_ELF32_symbol **left, uint64_t len_l, t_ELF32_symbol **right,
+							uint64_t len_r, char *str_table)
 {
-	t_ELF32_symbol	*temp;
+	size_t	i = 0;
+	size_t	j = 0;
+	size_t	k = 0;
+	t_ELF32_symbol **temp = ft_calloc(sizeof(t_ELF32_symbol **), len_l + len_r);
 
-	temp = *a;
-	*a = *b;
-	*b = temp;
+	while (i < len_l && j < len_r)
+	{
+
+		char *s1 = &str_table[left[j]->st_name];
+		char *s2 = &str_table[right[j]->st_name];
+		if (ft_strncmpi(s1, s2, ft_strlen(s1)) <= 0)
+			temp[k++] = left[i++];
+		else
+			temp[k++] = right[j++];
+	}
+	while (i < len_l)
+		temp[k++] = left[i++];
+	while (j < len_r)
+		temp[k++] = right[j++];
+	i = -1;
+	while (++i < k)
+		left[i] = temp[i];
+	free(temp);
+	return (left);
 }
 
-// Bubblesort because I am lazy and there are few symbols
-t_ELF32_symbol	**sort_elf32_list(t_ELF32_symbol **list, uint32_t len, char *str_table)
+t_ELF32_symbol **sort_elf32_list(t_ELF32_symbol **list, uint64_t len, char *str_table)
 {
-	uint32_t i;
-	uint32_t j;
-
-	i = 0;
-	while (i < len - 1)
-	{
-		j = 0;
-		while (j < len - i - 1)
-		{
-			char *s1 = &str_table[list[j]->st_name];
-			char *s2 = &str_table[list[j + 1]->st_name];
-			if (ft_strncmp(s1, s2, ft_strlen(s1)) > 0)
-				swap_elf32(&list[j], &list[j + 1]);
-			j++;
-		}
-		i++;
-	}
-	return (list);
+	uint64_t	mid = len / 2;
+	if (len <= 1)
+		return (list);
+	t_ELF32_symbol **left = sort_elf32_list(list, mid, str_table);
+	t_ELF32_symbol **right = sort_elf32_list(list + mid, len - mid, str_table);
+	return (msort_elf32(left, mid, right, len - mid, str_table));
 }
